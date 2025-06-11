@@ -5,7 +5,6 @@ const connectDB = require('./config/database')
 const cookieParser = require('cookie-parser');
 
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
@@ -19,17 +18,19 @@ app.use(cookieParser());
 
 
 const authRoutes = require('./routes/authRoutes');
-
+const journalRoutes = require("./routes/journalRoutes");
 app.use('/api/auth', authRoutes);
+
+app.use("/api/journal", journalRoutes);
 
 connectDB();
 
-// check if server is running
+
 app.get('/', (req, res) => {
   res.send('MindSpace backend is running ');
 });
 
-// Start server
+
 app.listen(PORT, () => {
   console.log(`Server is running on Port: ${PORT} `);
 });
