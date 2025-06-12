@@ -17,7 +17,7 @@ const generateToken = (id) => {
 // Register User and Sign up
 
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password ,role } = req.body;
 
   try {
     if (!name || !email || !password) {
@@ -41,6 +41,7 @@ const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      role,
       verified: false,
     });
 
@@ -60,7 +61,8 @@ const registerUser = async (req, res) => {
       user: {
         name: user.name,
         _id: user._id,
-        email: user.email
+        email: user.email,
+        role,
       }
     });
 
@@ -225,6 +227,7 @@ const verifyOtp = async (req, res) => {
       user: {
         _id: user._id,
         email: user.email,
+        role: user.role,
         name: user.name,
       }
     });
