@@ -287,9 +287,31 @@ const resendOtp = async (req, res) => {
 };
 
 
+//unsubscribe from email
+
+const unSubscribe = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { receiveEmails: false },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).send("<h2>User not found.</h2>");
+    }
+
+    return res.send("<h2>You’ve been unsubscribed from reminder emails. 💌</h2>");
+  } catch (err) {
+    return res.status(500).send("<h2>Something went wrong. Try again later.</h2>");
+  }
+};
+
+
 module.exports = {
   registerUser,
   loginUser,
   verifyOtp,
   resendOtp,
+  unSubscribe
 };
