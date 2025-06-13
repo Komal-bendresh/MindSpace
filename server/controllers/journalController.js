@@ -1,33 +1,65 @@
 
-const JournalEntry = require("../models/journalModel");
+const Journal = require("../models/journalModel");
+const User = require("../models/User");
 
-// ➕ Create a new journal entry
 const createJournalEntry = async (req, res) => {
-  const {  mood, title, text, imageUrl, audioUrl  } = req.body;
-
   try {
-    if (!mood || !title) {
-      return res.status(400).json({ message: "Mood and title are required." });
+    const { mood, text, emotion, imageUrl, audioUrl } = req.body;
+    const userId = req.user._id;
+
+    // Save journal entry
+    const newEntry = await Journal.create({
+      user: userId,
+      mood,
+      text,
+      emotion,
+      imageUrl,
+      audioUrl,
+    });
+
+    // STREAK LOGIC
+    const user = await User.findById(userId);
+    const today = new Date().setHours(0, 0, 0, 0);
+    const lastDate = user.lastEntryDate
+      ? new Date(user.lastEntryDate).setHours(0, 0, 0, 0)
+      : null;
+
+    if (!lastDate || today - lastDate > 86400000 * 1.5) {
+      // More than 1.5 days passed → reset streak
+      user.streak = 1;
+    } else if (today - lastDate === 86400000) {
+      // Exactly 1 day difference → increase streak
+      user.streak += 1;
+    } // else → same day, no change
+
+    user.lastEntryDate = new Date();
+
+    // BADGE LOGIC
+    const badgeMap = {
+      3: "🗓 3-Day Streak",
+      7: "🔥 7-Day Streak",
+      14: "💪 14-Day Champion",
+      30: "🏆 30-Day Consistency King/Queen",
+    };
+
+    if (badgeMap[user.streak] && !user.badges.includes(badgeMap[user.streak])) {
+      user.badges.push(badgeMap[user.streak]);
     }
 
-    const newEntry = await JournalEntry.create({
-      user: req.user._id,
-    mood,
-    title,
-    text,
-    imageUrl,
-    audioUrl,
-    });
+    await user.save();
 
-    res.status(201).json({
-      message: "Journal entry created successfully.",
+    return res.status(201).json({
+      message: "Journal entry created",
       entry: newEntry,
+      streak: user.streak,
+      badges: user.badges,
     });
-  } catch (err) {
-    console.error("Create Journal Error:", err.message);
-    res.status(500).json({ message: "Error creating journal entry." });
+  } catch (error) {
+    console.error("Error in createJournalEntry:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
+
 
 //  Get all journal entries of logged-in user
 const getUserJournalEntries = async (req, res) => {
