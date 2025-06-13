@@ -28,10 +28,13 @@ app.use("/api/ai",aiRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admin", adminRoutes);
 
 
 connectDB();
 
+require("./cron/weeklyReminder");
 
 app.get('/', (req, res) => {
   res.send('MindSpace backend is running ');
