@@ -1,3 +1,4 @@
+const checkLimit = require("../utils/checkLimit");
 
 const Journal = require("../models/journalModel");
 const User = require("../models/User");
@@ -45,6 +46,17 @@ const createJournalEntry = async (req, res) => {
     if (badgeMap[user.streak] && !user.badges.includes(badgeMap[user.streak])) {
       user.badges.push(badgeMap[user.streak]);
     }
+    if (!checkLimit("journal", req.user)) {
+  return res.status(403).json({ message: "Journal limit reached for today. Upgrade to premium." });
+   }
+   
+   const todayStr = new Date().toDateString();
+const isSameDay = user.journalLimit?.lastUsed?.toDateString() === todayStr;
+
+user.journalLimit = {
+  count: isSameDay ? user.journalLimit.count + 1 : 1,
+  lastUsed: new Date(),
+};
 
     await user.save();
 
