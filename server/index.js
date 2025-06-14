@@ -31,6 +31,9 @@ app.use("/api/analytics", analyticsRoutes);
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes);
 
+const paymentRoutes = require("./routes/paymentRoutes");
+app.use("/api/payment", paymentRoutes);
+
 
 connectDB();
 
