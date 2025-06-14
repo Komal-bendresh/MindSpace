@@ -48,6 +48,14 @@ const userSchema = new mongoose.Schema({
      [{ url: String, 
       mood: String,
        date: Date }],
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
 
 
 
