@@ -115,6 +115,11 @@ const loginUser = async (req, res) => {
     }
 
     const token = generateToken(user._id);
+    
+      // send welcome mail
+    await sendWelcomeEmail(user.email, user.name);
+    console.log();
+    
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -127,10 +132,7 @@ const loginUser = async (req, res) => {
       }
     });
 
-    // send welcome mail
-    await sendWelcomeEmail(user.email, user.name);
-    console.log();
-    
+  
 
     
 
@@ -287,6 +289,16 @@ const resendOtp = async (req, res) => {
 };
 
 
+//logout user
+const logoutUser = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+  });
+  res.status(200).json({ message: "Logged out successfully" });
+};
+
+
+
 //unsubscribe from email
 
 const unSubscribe = async (req, res) => {
@@ -313,5 +325,6 @@ module.exports = {
   loginUser,
   verifyOtp,
   resendOtp,
+  logoutUser,
   unSubscribe
 };
