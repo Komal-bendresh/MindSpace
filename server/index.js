@@ -8,12 +8,18 @@ const cookieParser = require('cookie-parser');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000; 
+const PORT = process.env.PORT; 
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(cors({
+  origin: process.env.REACT_APP_URL, 
+  credentials: true               
+}));
+
 
 
 
