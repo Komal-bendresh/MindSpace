@@ -18,7 +18,7 @@ export default function Signup() {
     setLoading(true);
     try {
       const res = await signupUser(formData);
-      navigate('/verify-otp', { state: { email: formData.email } });
+      navigate('/verify-otp', { state: formData  });
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
     } finally {
@@ -27,7 +27,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-xl shadow-lg">
+     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} className="w-full p-3 border rounded" required />
