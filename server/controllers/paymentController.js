@@ -4,7 +4,7 @@ const User = require("../models/User");
 
 exports.createOrder = async (req, res) => {
   const options = {
-    amount: 19900, // ₹199 in paise
+    amount: 2900, 
     currency: "INR",
     receipt: `receipt_${Date.now()}`,
   };
