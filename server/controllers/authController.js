@@ -6,8 +6,7 @@ const crypto = require("crypto");
 const sendOtpEmail = require("../utils/sendOtp");
 const generateOTP = require("../utils/generateOtp");
 const sendWelcomeEmail = require("../utils/sendWelcomeEmail");
-
-
+const PendingUser = require("../models/PendingUserModel")
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -15,64 +14,41 @@ const generateToken = (id) => {
 };
 
 // Register User and Sign up
-
 const registerUser = async (req, res) => {
   const { name, email, password ,role } = req.body;
 
   try {
     if (!name || !email || !password) {
-      return res.status(400).
-      json({ 
-        message: "All fields are required" 
-      });
+      return res.status(400).json({ message: "All fields are required" });
+    }
+     const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists. Please login." });
     }
 
-    const userExists = await User.findOne({ email });
-
-    if (userExists) {
-      return res.status(400).
-      json({ 
-        message: "User Already Exists! Please Login to Continue" 
-      });
+    const pending = await PendingUser.findOne({ email });
+    if (pending) {
+      await PendingUser.deleteOne({ email }); // cleanup previous pending if needed
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      role,
-      verified: false,
-    });
+    await PendingUser.create({ name, email, password: hashedPassword, role });
 
-    // Generate 6-digit OTP
-    const otpCode = crypto.randomInt(100000, 999999).toString();
-    const hashedOtp = await bcrypt.hash(otpCode, 10);
+  const otpCode = crypto.randomInt(100000, 999999).toString();
+  const hashedOtp = await bcrypt.hash(otpCode, 10);
+    await OTP.create({ email, otp: hashedOtp });
 
-     await OTP.create({ email, otp: hashedOtp });
+    await sendOtpEmail(email, otpCode);
 
+   
 
-    await sendOtpEmail(user.email, otpCode);
-  
-    console.log(`OTP for ${email}: ${otpCode}`);
-
-    res.status(200).json({
-      message: "User registered. Please verify OTP sent to your email.",
-      user: {
-        name: user.name,
-        _id: user._id,
-        email: user.email,
-        role,
-      }
+    return res.status(200).json({
+      message: "OTP sent to your email. Please verify to complete signup.",
     });
 
   } catch (error) {
     console.error("Register error:", error.message);
-    res.status(500)
-    .json({
-       message: "Error occurred while registering user"
-
-     });
+    return res.status(500).json({ message: "Registration failed" });
   }
 };
 
@@ -118,7 +94,7 @@ const loginUser = async (req, res) => {
     
       // send welcome mail
     await sendWelcomeEmail(user.email, user.name);
-    console.log();
+   
     
 
     res.cookie("token", token, {
@@ -148,99 +124,74 @@ const loginUser = async (req, res) => {
 
 
 //verify otp
-
 const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
 
   try {
     if (!email || !otp) {
-      return res.status(400)
-      .json({
-         message: "Email and OTP are required" 
-
-      });
+      return res.status(400).json({ message: "Email and OTP are required" });
     }
 
-    const user = await User.findOne({ email });
-
-    if (!user)
-       return res.status(404).
-    json({ 
-      message: "User not found" 
-
-    });
-
-    if (user.verified) {
-      return res.status(400)
-      .json({
-         message: "User already verified"
-
-       });
+    const pending = await PendingUser.findOne({ email });
+    if (!pending) {
+      return res.status(400).json({ message: "No signup request found for this email." });
     }
 
-    // Get latest OTP entry
+    const existingUser = await User.findOne({ email });
+    if (existingUser && existingUser.verified) {
+      return res.status(400).json({ message: "User already verified. Please login." });
+    }
+
     const otpRecord = await OTP.findOne({ email }).sort({ createdAt: -1 });
     if (!otpRecord) {
-      return res.status(400)
-      .json({
-         message: "OTP not found or expired" 
-
-      });
+      return res.status(400).json({ message: "OTP not found or expired" });
     }
 
-    const now = new Date();
-    const otpAge = (now - otpRecord.createdAt) / 1000; // in seconds
-
+    const otpAge = (Date.now() - otpRecord.createdAt) / 1000;
     if (otpAge > 300) {
-      await OTP.deleteMany({ email }); // optional: clean up expired OTPs
-      return res.status(400)
-      .json({ 
-        message: "OTP expired. Please request a new one." 
-
-      });
+      await OTP.deleteMany({ email });
+      return res.status(400).json({ message: "OTP expired. Please request a new one." });
     }
 
-        const isMatch = await bcrypt.compare(otp, otpRecord.otp);
+    const isMatch = await bcrypt.compare(otp, otpRecord.otp);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
 
-        if (!isMatch) {
-          return res.status(400)
-          .json({ 
-            message: "Invalid OTP" 
-
-          });
-        }
-
-    // Mark user as verified
-    user.verified = true;
-    await user.save();
-
-    // Delete OTP records for cleanup
+    const user = await User.create({
+      name: pending.name,
+      email: pending.email,
+      password: pending.password,
+      role: pending.role,
+      verified: true,
+    });
 
     await OTP.deleteMany({ email });
+    await PendingUser.deleteOne({ email });
+    
 
-    // Now generate token
     const token = generateToken(user._id);
 
+
+      // send welcome mail
+    await sendWelcomeEmail(user.email, user.name);
+    
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     }).status(200).json({
-      message: "OTP verified successfully",
+      message: "User created and verified successfully",
       user: {
         _id: user._id,
+        name: user.name,
         email: user.email,
         role: user.role,
-        name: user.name,
       }
     });
 
   } catch (error) {
     console.error("OTP verification error:", error.message);
-    res.status(500).
-    json({
-       message: "Error verifying OTP" 
-
-    });
+    return res.status(500).json({ message: "OTP verification failed" });
   }
 };
 
