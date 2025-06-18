@@ -11,13 +11,12 @@ const app = express();
 const PORT = process.env.PORT; 
 
 // Middlewares
-app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: process.env.REACT_APP_URL, 
-  credentials: true               
+  origin: "http://localhost:5173", 
+  credentials: true                
 }));
 
 
