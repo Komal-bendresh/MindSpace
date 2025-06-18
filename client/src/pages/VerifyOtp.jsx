@@ -1,20 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { verifyOtp } from '../api/auth';
 
 const VerifyOtp = () => {
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Get email from location state or sessionStorage
+  useEffect(() => {
+    const fromSignup = location.state?.email;
+    if (fromSignup) {
+      setEmail(fromSignup);
+      sessionStorage.setItem("pendingSignupEmail", fromSignup);
+    } else {
+      const saved = sessionStorage.getItem("pendingSignupEmail");
+      if (saved) setEmail(saved);
+    }
+  }, [location]);
 
   const handleVerify = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/verify-otp', { email, otp });
+      const res = await verifyOtp({ email, otp });
       toast.success(res.data.message);
-      // redirect to home
-      window.location.href = '/home';
+      sessionStorage.removeItem("pendingSignupEmail");
+      window.location.href = '/';
     } catch (err) {
       toast.error(err.response?.data?.message || 'OTP verification failed');
     }
@@ -23,7 +38,7 @@ const VerifyOtp = () => {
 
   const handleResend = async () => {
     if (!email) {
-      toast.warn("Please enter your email first");
+      toast.warn("Email missing. Please signup again.");
       return;
     }
 
