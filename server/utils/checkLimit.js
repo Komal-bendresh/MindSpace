@@ -1,5 +1,5 @@
 module.exports = function checkLimit(type, user) {
-  if (req.user.role !== 'admin' || user.isPremium) return true;
+  if (user.role === 'admin' || user.isPremium)  return true;
 
   const today = new Date().toDateString();
 
