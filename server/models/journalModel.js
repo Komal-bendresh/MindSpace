@@ -8,14 +8,12 @@ const journalEntrySchema = new mongoose.Schema({
     required: true,
   },
   mood: {
-    type: Number,
-    min: 0,
-    max: 10,
+    type: String,
     required: true,
   },
   title: {
     type: String,
-    required: true,
+    // required: true,
     trim: true,
     maxlength: 100,
   },
