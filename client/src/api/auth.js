@@ -11,3 +11,7 @@ export const verifyOtp = async (data) => {
 export const loginUser = async (data) => {
   return await axios.post('/api/auth/login', data);
 };
+
+export const createJournalEntry = async (data) => {
+  return await axios.post('/api/journal', data);
+};
