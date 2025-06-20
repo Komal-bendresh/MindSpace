@@ -17,7 +17,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 router.use(authMiddleware); 
 
 // Protected Routes
-router.post("/create", authMiddleware, createJournalEntry);
+router.post("/", authMiddleware, createJournalEntry);
 router.get("/my-entries", authMiddleware, getUserJournalEntries);
 router.put("/edit/:id", authMiddleware, editJournalEntry);
 router.delete("/delete/:id", authMiddleware, deleteJournalEntry);
