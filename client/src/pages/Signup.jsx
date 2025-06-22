@@ -20,7 +20,6 @@ export default function Signup() {
     setLoading(true);
     try {
       const res = await signupUser(formData);
-      await new Promise(resolve => setTimeout(resolve, 2000));
          navigate('/verify-otp', { state: formData  });
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
@@ -33,9 +32,9 @@ export default function Signup() {
     <div className="min-h-screen gradient-background flex items-center justify-center p-4">
       <style >{`
         .gradient-background {
-          background: linear-gradient(301deg, #1b2430, #51557e, #816797, #d6d5a8);
+          background: linear-gradient(301deg, #51557e, #816797, #d6d5a8);
           background-size: 300% 300%;
-          animation: gradient-animation 15s ease infinite;
+          animation: gradient-animation 5s ease infinite;
         }
 
         @keyframes gradient-animation {
