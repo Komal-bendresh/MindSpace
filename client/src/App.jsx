@@ -5,9 +5,11 @@ import VerifyOtp from "./pages/VerifyOtp";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import JournalEntry from "./pages/JournalEntry";
+import {ThemeProvider} from "./context/ThemeContext"
 
 function App() {
   return (
+    <ThemeProvider>
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -19,6 +21,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
+    </ThemeProvider>
   );
 }
 
