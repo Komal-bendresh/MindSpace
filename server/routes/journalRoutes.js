@@ -1,4 +1,4 @@
-// routes/journalRoutes.js
+const JournalEntry = require("../models/journalModel");
 const express = require("express");
 const router = express.Router();
 
