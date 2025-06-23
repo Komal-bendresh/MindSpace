@@ -1,6 +1,6 @@
 const checkLimit = require("../utils/checkLimit");
 
-const Journal = require("../models/journalModel");
+const JournalEntry = require("../models/journalModel");
 const User = require("../models/User");
 
 const createJournalEntry = async (req, res) => {
@@ -9,7 +9,7 @@ const createJournalEntry = async (req, res) => {
     const userId = req.user._id;
 
     // Save journal entry
-    const newEntry = await Journal.create({
+    const newEntry = await JournalEntry.create({
       user: userId,
       mood,
       text,
