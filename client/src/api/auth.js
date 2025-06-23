@@ -15,3 +15,8 @@ export const loginUser = async (data) => {
 export const createJournalEntry = async (data) => {
   return await axios.post('/api/journal', data);
 };
+
+export const getJournalEntries = async () => {
+  const res = await axios.get("/api/journal/my-entries");
+  return res.data.entries; 
+};
