@@ -10,7 +10,7 @@ const moods = [
   { label: "Neutral", value: "neutral", emoji: "😐" },
 ];
 
-const JournalForm = () => {
+const JournalForm = ({ onEntryAdded }) => {
   const [mood, setMood] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
