@@ -7,17 +7,13 @@ const JournalEntry = () => {
   const [entries, setEntries] = useState([]);
 
   const fetchEntries = async () => {
-    try {
-      const res = await getJournalEntries();
-     setEntries(res?.entries || []);
-    //   if (typeof onEntryAdded === 'function') {
-    // onEntryAdded();
-  // }
-       console.log("Submitting...")
-    } catch (err) {
-      console.error("Error fetching journals:", err);
-    }
-  };
+  try {
+    const entries = await getJournalEntries(); 
+    setEntries(entries || []);
+  } catch (err) {
+    console.error("Error fetching journals:", err);
+  }
+};
 
 useEffect(() => {
   fetchEntries(); 
