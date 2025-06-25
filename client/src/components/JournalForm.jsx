@@ -12,6 +12,7 @@ const moods = [
 
 const JournalForm = () => {
   const [mood, setMood] = useState("");
+  const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -43,6 +44,18 @@ const JournalForm = () => {
   return (
     <div className="w-full lg:w-2/3 p-4">
       <h2 className="text-lg font-semibold mb-4">New Entry</h2>
+
+      {/* Title input */}
+<div className="mb-4">
+  <label className="block mb-2 font-medium">Title</label>
+  <input
+    type="text"
+    value={title}
+    onChange={(e) => setTitle(e.target.value)}
+    className="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-black dark:text-white"
+    placeholder="Title (optional)"
+  />
+</div>
 
       {/* Emoji Mood Selector */}
       <div className="mb-4">
