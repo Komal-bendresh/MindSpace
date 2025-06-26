@@ -5,17 +5,18 @@ const User = require("../models/User");
 
 const createJournalEntry = async (req, res) => {
   try {
-    const { mood, text, emotion, imageUrl, audioUrl } = req.body;
+    const { title ,mood, text, emotion, imageUrl, audioUrl } = req.body;
     const userId = req.user._id;
 
     // Save journal entry
     const newEntry = await JournalEntry.create({
       user: userId,
       mood,
+      title,
       text,
       emotion,
       imageUrl,
-      audioUrl,
+      audioUrl,     
     });
 
     // STREAK LOGIC
