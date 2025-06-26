@@ -12,10 +12,10 @@ export const loginUser = async (data) => {
   return await axios.post('/api/auth/login', data);
 };
 
-export const createJournalEntry = async ({ mood, text }) => {
+export const createJournalEntry = async ({ mood, text ,title}) => {
   const res = await axios.post(
     "/api/journal",
-    { mood, text },
+    { mood, text ,title},
     { withCredentials: true } 
   );
   return res.data.entry;
@@ -26,4 +26,12 @@ export const getJournalEntries = async () => {
     withCredentials: true, 
   });
   return res.data.entries;
+};
+
+export const deleteJournalEntry = async (id) => {
+  return await axios.delete(`/api/journal/delete/${id}`);
+};
+
+export const updateJournalEntry = async (id, data) => {
+  return await axios.put(`/api/journal/edit/${id}`, data);
 };
