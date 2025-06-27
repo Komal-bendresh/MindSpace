@@ -5,8 +5,13 @@ const User = require("../models/User");
 
 const createJournalEntry = async (req, res) => {
   try {
-    const { title ,mood, text, emotion, imageUrl, audioUrl } = req.body;
+     if (!checkLimit("journal", req.user)) {
+  return res.status(403).json({ message: "Journal limit reached for today. Upgrade to premium." });
+   }
+   
+    const { title ,mood, text, emotion, imageUrl, audioUrl , analysis } = req.body;
     const userId = req.user._id;
+    
 
     // Save journal entry
     const newEntry = await JournalEntry.create({
@@ -16,7 +21,8 @@ const createJournalEntry = async (req, res) => {
       text,
       emotion,
       imageUrl,
-      audioUrl,     
+      audioUrl,
+      analysis,      
     });
 
     // STREAK LOGIC
@@ -47,9 +53,6 @@ const createJournalEntry = async (req, res) => {
     if (badgeMap[user.streak] && !user.badges.includes(badgeMap[user.streak])) {
       user.badges.push(badgeMap[user.streak]);
     }
-    if (!checkLimit("journal", req.user)) {
-  return res.status(403).json({ message: "Journal limit reached for today. Upgrade to premium." });
-   }
    
    const todayStr = new Date().toDateString();
 const isSameDay = user.journalLimit?.lastUsed?.toDateString() === todayStr;
@@ -89,12 +92,12 @@ const getUserJournalEntries = async (req, res) => {
 // edit journal
 const editJournalEntry = async (req, res) => {
   const { id } = req.params;
-  const { title, text, mood, imageUrl, audioUrl } = req.body;
+  const { title, text, mood, imageUrl, audioUrl ,analysis} = req.body;
 
   try {
     const updated = await JournalEntry.findOneAndUpdate(
       { _id: id, user: req.user._id },
-      { title, text, mood, imageUrl, audioUrl },
+      { title, text, mood, imageUrl, audioUrl, analysis},
       { new: true }
     );
 
