@@ -25,6 +25,12 @@ const journalEntrySchema = new mongoose.Schema({
   type: String,
   default: "",
 },
+analysis: {
+  emotion: String,
+  suggestion: String,
+  affirmation: String,
+  goal: String,
+},
 audioUrl: {
   type: String,
   default: "",
