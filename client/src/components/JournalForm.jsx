@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createJournalEntry, updateJournalEntry } from "../api/auth";
 import { toast } from "react-hot-toast";
+import { analyzeJournalEntry } from "../api/auth";
 
 const moods = [
   { label: "Happy", value: "happy", emoji: "😄" },
@@ -15,48 +16,91 @@ const JournalForm = ({ onEntryAdded, editingEntry, clearEditing }) => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState("");
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
-  // Prefill data when editing
+
   useEffect(() => {
     if (editingEntry) {
       setMood(editingEntry.mood || "");
       setTitle(editingEntry.title || "");
       setText(editingEntry.text || "");
+      setAiAnalysis(editingEntry.analysis || ""); 
+      setShowAnalysis(!!editingEntry.analysis);   
     } else {
       setMood("");
       setTitle("");
       setText("");
+      setAiAnalysis("");
+      setShowAnalysis(false);
     }
   }, [editingEntry]);
 
-  const handleSubmit = async () => {
-    if (!mood || !text) {
-      toast.error("Please select a mood and write something.");
-      return;
+
+  const handleAIAnalysis = async () => {
+  if (!text.trim()) return toast.error("Please write your journal first.");
+
+  try {
+    setLoading(true);
+
+    const result = await analyzeJournalEntry(text);
+    setAiAnalysis(result);
+    setShowAnalysis(true);
+    toast.success("AI analysis complete!");
+
+    const payload = { mood, title, text, analysis: result }; // ✅ use result directly
+
+    if (!editingEntry) {
+      await createJournalEntry(payload);
+      toast.success("Journal auto-saved after analysis!");
+      onEntryAdded(); // refresh list
+    } else {
+      await updateJournalEntry(editingEntry._id, payload);
+      toast.success("Journal updated with new analysis!");
     }
 
-    try {
-      setLoading(true);
-      if (editingEntry) {
-        await updateJournalEntry(editingEntry._id, { mood, title, text });
-        toast.success("Journal updated!");
-        clearEditing(); // Exit edit mode
-      } else {
-        await createJournalEntry({ mood, title, text });
-        toast.success("Journal saved!");
-      }
+  } catch (err) {
+    toast.error("AI analysis failed.");
+    console.error("AI error:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
-      // Clear form
-      setMood("");
-      setTitle("");
-      setText("");
-      onEntryAdded(); // Refresh entries
-    } catch (err) {
-      toast.error("Error saving entry.");
-    } finally {
-      setLoading(false);
+const handleSubmit = async () => {
+  if (!mood || !text) {
+    toast.error("Please select a mood and write something.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const payload = { mood, title, text, analysis: aiAnalysis };
+    // if (aiAnalysis) payload.analysis = aiAnalysis;
+     console.log("Saving entry with payload:", payload);
+
+    if (editingEntry) {
+      await updateJournalEntry(editingEntry._id, payload);
+      toast.success("Journal updated!");
+      clearEditing();
+    } else {
+      await createJournalEntry(payload);
+      toast.success("Journal saved!");
     }
-  };
+
+    setMood("");
+    setTitle("");
+    setText("");
+    setAiAnalysis("");
+    setShowAnalysis(false);
+    onEntryAdded();
+  } catch (err) {
+    toast.error("Error saving entry.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="w-full lg:w-2/3 p-4">
@@ -128,6 +172,15 @@ const JournalForm = ({ onEntryAdded, editingEntry, clearEditing }) => {
             ? "Update Entry"
             : "Save Entry"}
         </button>
+        <button
+           type="button"
+           onClick={handleAIAnalysis}
+           disabled={!text || loading}
+           className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 disabled:opacity-50"
+>
+  AI-Powered Mood Analysis
+</button>
+
 
         {editingEntry && (
           <button
@@ -138,7 +191,16 @@ const JournalForm = ({ onEntryAdded, editingEntry, clearEditing }) => {
             Cancel
           </button>
         )}
+
       </div>
+       {showAnalysis && aiAnalysis && (
+          <div className="mt-4 p-4 bg-gray-100 dark:bg-zinc-800 rounded overflow-scroll">
+            <h3 className="font-semibold mb-2">AI Mood Analysis:</h3>
+            <pre className="text-sm">{aiAnalysis}</pre>
+          </div>
+        )}
+
+        
     </div>
   );
 };
