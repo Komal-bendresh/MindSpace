@@ -25,6 +25,7 @@ const createJournalEntry = async (req, res) => {
       analysis,      
     });
 
+    
     // STREAK LOGIC
     const user = await User.findById(userId);
     const today = new Date().setHours(0, 0, 0, 0);
