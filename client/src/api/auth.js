@@ -35,3 +35,8 @@ export const deleteJournalEntry = async (id) => {
 export const updateJournalEntry = async (id, data) => {
   return await axios.put(`/api/journal/edit/${id}`, data);
 };
+
+export const analyzeJournalEntry = async (text) => {
+  const res = await axios.post("/api/ai/analyze", { journalText: text });
+  return res.data.analysis;
+};
