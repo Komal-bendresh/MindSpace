@@ -24,9 +24,9 @@ const RecentEntriesPanel = ({  entries = [],onEdit,onDelete  }) => {
       {entries.length === 0 ? (
         <p className="text-sm text-gray-500 dark:text-gray-400">No entries yet.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-3" >
           {entries.map((entry) => (
-            <li
+            <li onClick={() => onEdit(entry)}
               key={entry._id}
               className="p-3 bg-gray-100 dark:bg-zinc-800 rounded-lg shadow text-sm"
             >
@@ -49,12 +49,7 @@ const RecentEntriesPanel = ({  entries = [],onEdit,onDelete  }) => {
             <div className="flex justify-between">
                <p className="line-clamp-2">{entry.text}</p>
            <div className="flex justify-end gap-2 mt-2">
-          <button
-            onClick={() => onEdit(entry)}
-            className="text-blue-500 text-xs hover:underline"
-          >
-            Edit
-          </button>
+          
           <button
             onClick={() => onDelete(entry._id)}
             className="text-red-500 text-xs hover:underline"
@@ -66,7 +61,7 @@ const RecentEntriesPanel = ({  entries = [],onEdit,onDelete  }) => {
              
             </li>
           ))}
-          
+                      
         </ul>
         
       )}
