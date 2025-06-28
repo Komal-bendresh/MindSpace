@@ -15,6 +15,7 @@ const Header = () => {
             <Link to="/login" className="hover:underline">Login</Link>
             <Link to="/signup" className="hover:underline">Signup</Link>
             <Link to="/journal" className="hover:underline">Journal</Link>
+            <Link to="/chat" className="hover:underline">ChatWithAi</Link>
           </nav>
 
           <DarkModeToggle />
