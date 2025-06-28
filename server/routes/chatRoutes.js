@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { chatWithAI } = require("../controllers/chatController");
+const { chatWithAI ,getChatHistory} = require("../controllers/chatController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/chat", authMiddleware, chatWithAI);
+router.post("/ai", authMiddleware, chatWithAI);
+router.get("/chat-history", authMiddleware, getChatHistory);
 
 module.exports = router;
