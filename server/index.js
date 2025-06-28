@@ -25,11 +25,13 @@ app.use(cors({
 const authRoutes = require('./routes/authRoutes');
 const journalRoutes = require("./routes/journalRoutes");
 const aiRoutes =  require("./routes/aiRoutes");
+const chatRoutes =  require("./routes/chatRoutes");
 const reviewRoutes = require("./routes/reviewRoutes")
 const analyticsRoutes = require("./routes/analyticsRoutes");
 app.use('/api/auth', authRoutes);
 app.use("/api/journal", journalRoutes);
 app.use("/api/ai",aiRoutes);
+app.use("/api/chat",chatRoutes)
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
