@@ -40,3 +40,28 @@ export const analyzeJournalEntry = async (text) => {
   const res = await axios.post("/api/ai/analyze", { journalText: text });
   return res.data.analysis;
 };
+
+export const sendMessageToAI = async (message) => {
+  const token = localStorage.getItem("token");
+
+  const res = await axios.post( "/api/chat/ai", { message },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data.reply;
+};
+
+
+export const getChatHistory = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("/api/chat/chat-history", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data.messages;
+};
