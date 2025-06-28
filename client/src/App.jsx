@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import JournalEntry from "./pages/JournalEntry";
 import {ThemeProvider} from "./context/ThemeContext"
+import AIChat from "./pages/AIChat";
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
           <Route path="signup" element={<Signup />} />
           <Route path="login" element={<Login />} />
           <Route path="verify-otp" element={<VerifyOtp />} />
-          <Route path="/journal" element={<JournalEntry/>}></Route>
+          <Route path="/journal" element={<JournalEntry/>}/>
+          <Route path="/chat" element={<AIChat />} />
         </Route>
       </Routes>
     </Router>
