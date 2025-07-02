@@ -44,10 +44,6 @@ const userSchema = new mongoose.Schema({
       },
       lastUsed: { type: Date },
     },
-    savedPlaylists:
-     [{ url: String, 
-      mood: String,
-       date: Date }],
     isPremium: {
       type: Boolean,
       default: false,
