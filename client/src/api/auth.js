@@ -41,20 +41,19 @@ export const analyzeJournalEntry = async (text) => {
   return res.data.analysis;
 };
 
-export const sendMessageToAI = async (message) => {
+export const sendMessageToAI = async (chatId, message) => {
   const token = localStorage.getItem("token");
-
-  const res = await axios.post( "/api/chat/ai", { message },
+  const res = await axios.post(
+    `/api/chat/chat/${chatId}`,
+    { message },
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
-
   return res.data.reply;
 };
-
 
 export const getChatHistory = async () => {
   const token = localStorage.getItem("token");
@@ -63,5 +62,83 @@ export const getChatHistory = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return res.data.messages;
+  return res.data;
+};
+
+export const clearChatHistory = async (chatId) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.delete(`/api/chat/chat-clear/${chatId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data.message;
+};
+
+export const startNewChat = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.post("/api/chat", {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
+
+export const deleteChat = async (chatId) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.delete(`/api/chat/delete/${chatId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
+
+export const generatePlaylist = async (emotion) => {
+  const token = localStorage.getItem("token");
+
+  const res = await axios.post(
+    "/api/play/playlist",
+    { emotion },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+export const fetchMoodTrends = async (range = 7) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`/api/analytics/mood-trends?range=${range}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.data;
+};
+
+export const fetchEmotionFrequency = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("/api/analytics/emotion-frequency", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.data;
+};
+
+export const fetchJournalKeywords = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("/api/analytics/journal-keywords", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.keywords;
+};
+
+export const fetchWeeklyInsights = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("/api/insights/tips", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
 };
