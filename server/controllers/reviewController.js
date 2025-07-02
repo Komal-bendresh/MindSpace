@@ -35,9 +35,10 @@ const getAllReviews = async (req, res) => {
   try {
     const reviews = await Review.find()
                                 .populate("user", "email");
+const avg = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length || 0;
 
-    res.status(200).
-    json({ reviews });
+    res.status(200).json({ reviews, avgRating: avg.toFixed(1) });
+  
 
   } catch (err) {
     res.status(500).json({ 
