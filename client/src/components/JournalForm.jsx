@@ -54,9 +54,9 @@ const JournalForm = ({ onEntryAdded, editingEntry, clearEditing }) => {
   setPlaylistUrl(editingEntry.playlistUrl || "");
   setShowAnalysis(!!editingEntry.analysis);
 
-  if (editingEntry.analysis) {
-    handleTextToSpeech(editingEntry.analysis);
-  }
+  // if (editingEntry.analysis) {
+  //   handleTextToSpeech(editingEntry.analysis);
+  // }
 
   } else {
     setMood("");
@@ -76,7 +76,7 @@ const JournalForm = ({ onEntryAdded, editingEntry, clearEditing }) => {
       setAnalyzing(true);
     const result = await analyzeJournalEntry(text); 
     setAiAnalysis(result);
-    handleTextToSpeech(result);
+    // handleTextToSpeech(result);
     setShowAnalysis(true);
 
     const detected = result.match(/Emotion detected:\s*(\w+)/i)?.[1]?.toLowerCase();
@@ -107,7 +107,7 @@ if (detected) {
       }
 
     } catch (err) {
-      toast.error("AI analysis failed.");
+      toast.error("AI analysis failed.Our AI assistant is temporarily unavailable. Please try again shortly.");
     } finally {
       setLoading(false);
     }
@@ -152,13 +152,13 @@ const handleAnalysis = async () => {
 };
 
   const handleSpeechToText = () => {
-    if (!recognitionRef.current) return toast.error("STT not supported");
+    if (!recognitionRef.current) return toast.error("Speach To Text Failed");
     recognitionRef.current.start();
     toast("Listening...");
   };
 
   const handleTextToSpeech = (textToSpeak) => {
-  if (!window.speechSynthesis) return toast.error("TTS not supported");
+  if (!window.speechSynthesis) return toast.error("Text To Speach Failed");
 
   if (isSpeaking) {
     window.speechSynthesis.cancel();
@@ -172,7 +172,6 @@ const handleAnalysis = async () => {
   utter.onend = () => setIsSpeaking(false);
   utter.onerror = () => {
     setIsSpeaking(false);
-    toast.error("TTS failed");
   };
 
   setIsSpeaking(true);
