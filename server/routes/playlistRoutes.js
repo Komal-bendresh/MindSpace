@@ -5,6 +5,6 @@ const { generatePlaylist, getSavedPlaylists } = require("../controllers/playlist
 const authMiddleware = require("../middleware/authMiddleware");
 
 router.post("/playlist", authMiddleware, generatePlaylist);
-router.get("/saved", authMiddleware, getSavedPlaylists);
+
 
 module.exports = router;
