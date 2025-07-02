@@ -42,10 +42,16 @@ Respond in this JSON format:
       }
     );
 
-    const text = response.data.choices[0].message?.content;
-    const insights = JSON.parse(text);
+ const rawText = response.data.choices[0].message?.content;
 
-    res.json(insights);
+const jsonMatch = rawText.match(/\{[\s\S]*?\}/);
+if (!jsonMatch) {
+  throw new Error("Invalid JSON format returned by GROQ");
+}
+
+   const insights = JSON.parse(jsonMatch[0]);
+res.json(insights);
+
   } catch (err) {
     console.error("GROQ Insight Error:", err);
     res.status(500).json({ message: "Failed to generate insights" });
