@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { loginUser } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 import loginPageimg from '../assets/loginPageimg.jpeg';
+import {useAuth} from "../context/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     // Inject the CSS styles into the document head
@@ -281,10 +283,17 @@ export default function Login() {
     setLoading(true);
     try {
        const res = await loginUser({ email, password });
-      navigate('/');
+      const token = res.data.token;
+
+        login(token); // ✅ updates context
+        navigate("/journal"); // or dashboard
+        
     } catch (err) {
+      console.log(err.response?.data || err.message);
+      alert("Login failed");
       setError(err.response?.data?.message || 'Login failed');
-    }finally {
+    }
+     finally {
       setLoading(false);
     }
   };
