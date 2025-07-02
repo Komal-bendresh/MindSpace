@@ -4,6 +4,7 @@ import RecentEntriesPanel from "../components/RecentEntriesPanel";
 import { getJournalEntries } from "../api/auth";
 import {deleteJournalEntry} from '../api/auth';
 import {updateJournalEntry } from '../api/auth';
+import { toast } from "react-toastify";
 
 
 const JournalEntry = () => {
@@ -26,6 +27,7 @@ const JournalEntry = () => {
       const handleDelete = async (id) => {
         try {
           await deleteJournalEntry(id);
+          toast.success("Journal Deleted Successfully")
           fetchEntries(); 
         } catch (err) {
           console.error("Delete failed", err);
@@ -35,7 +37,6 @@ const JournalEntry = () => {
 useEffect(() => {
   fetchEntries(); 
 }, []);
-console.log("Fetching journals...");
 
   return (
     <div className="flex flex-col lg:flex-row gap-4 p-4">

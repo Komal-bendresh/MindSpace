@@ -30,11 +30,6 @@ const generatePlaylist = async (req, res) => {
   const playlistUrl = moodBasedRedirect[mood] || playlistMap.neutral;
 
   // Save to user's history
-  user.savedPlaylists.push({
-    url: playlistUrl,
-    mood,
-    date: new Date(),
-  });
 
   
   await user.save();
@@ -46,12 +41,6 @@ const generatePlaylist = async (req, res) => {
   });
 };
 
-const getSavedPlaylists = async (req, res) => {
-  const user = await User.findById(req.user._id);
-  res.status(200).json({
-    success: true,
-    playlists: user.savedPlaylists.reverse(),
-  });
-};
 
-module.exports = { generatePlaylist, getSavedPlaylists };
+
+module.exports = { generatePlaylist };

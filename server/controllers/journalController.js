@@ -68,7 +68,9 @@ user.journalLimit = {
     });
   } catch (error) {
     console.error("Error in createJournalEntry:", error);
-    res.status(500).json({ error: "Server error" });
+    res.status(503).json({
+    message: "Our AI assistant is temporarily unavailable. Please try again shortly."
+  });
   }
 };
 
