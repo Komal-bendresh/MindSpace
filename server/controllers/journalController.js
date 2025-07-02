@@ -1,4 +1,3 @@
-
 const JournalEntry = require("../models/journalModel");
 const User = require("../models/User");
 
