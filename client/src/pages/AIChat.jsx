@@ -34,7 +34,6 @@ const AIChatPage = () => {
   }, []);
   
   useEffect(() => {
-  console.log("AIChatPage mounted - adding widget script");
 
   const script = document.createElement("script");
   script.src = "https://backend.omnidim.io/web_widget.js?secret_key=3072ce0cc21d246a71fd2a2e24d0edd0";
@@ -43,8 +42,7 @@ const AIChatPage = () => {
   scriptRef.current = script;
   document.body.appendChild(script);
 
-  return () => {
-    console.log("AIChatPage unmounted - removing widget");
+  return () => { 
     if (scriptRef.current) {
       document.body.removeChild(scriptRef.current);
     }
