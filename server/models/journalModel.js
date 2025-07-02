@@ -35,6 +35,8 @@ audioUrl: {
   type: String,
   default: "",
 },
+playlistUrl: String,
+
   createdAt: {
     type: Date,
     default: Date.now,
