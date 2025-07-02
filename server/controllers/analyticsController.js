@@ -1,6 +1,15 @@
 const JournalEntry = require("../models/journalModel");
 
 // Get mood trend (last 7 or 30 days)
+const moodScoreMap = {
+  happy: 5,
+  relaxed: 4,
+  neutral: 3,
+  sad: 2,
+  angry: 1,
+};
+
+// Get mood trend (last 7 or 30 days) — Updated with numeric score
 const getMoodTrends = async (req, res) => {
   const { range } = req.query; // '7' or '30'
   const days = parseInt(range) || 7;
@@ -10,12 +19,13 @@ const getMoodTrends = async (req, res) => {
   try {
     const entries = await JournalEntry.find({
       user: req.user._id,
-      createdAt: { $gte: fromDate }
+      createdAt: { $gte: fromDate },
     }).sort({ createdAt: 1 });
 
-    const data = entries.map(entry => ({
+    const data = entries.map((entry) => ({
       date: entry.createdAt.toISOString().slice(0, 10),
-      mood: entry.mood
+      mood: entry.mood,
+      score: moodScoreMap[entry.mood.toLowerCase()] || 3, // default neutral
     }));
 
     res.json({ data });
@@ -34,38 +44,15 @@ const getEmotionFrequency = async (req, res) => {
       moodCount[entry.mood] = (moodCount[entry.mood] || 0) + 1;
     });
 
-    res.json({ data: moodCount });
+      const pieData = Object.keys(moodCount).map((emotion) => ({
+      emotion,
+      count: moodCount[emotion],
+    }));
+    res.json({ data: pieData }); 
   } catch (err) {
     res.status(500).json({ message: "Failed to get emotion frequency" });
   }
 };
 
-// Get keywords from journals
-const getJournalKeywords = async (req, res) => {
-  try {
-    const entries = await JournalEntry.find({ user: req.user._id });
-    const text = entries.map(e => e.text || "").join(" ");
 
-    const words = text
-      .toLowerCase()
-      .replace(/[^\w\s]/g, "")
-      .split(/\s+/)
-      .filter(word => word.length > 3); // Ignore small/common words
-
-    const freq = {};
-    words.forEach(word => {
-      freq[word] = (freq[word] || 0) + 1;
-    });
-
-    const keywordData = Object.keys(freq).map(word => ({
-      text: word,
-      value: freq[word],
-    }));
-
-    res.json({ keywords: keywordData });
-  } catch (err) {
-    res.status(500).json({ message: "Failed to get keywords" });
-  }
-};
-
-module.exports = { getMoodTrends, getEmotionFrequency, getJournalKeywords };
+module.exports = { getMoodTrends, getEmotionFrequency };
