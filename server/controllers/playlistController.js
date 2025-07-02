@@ -1,4 +1,4 @@
-const User= require("../models/User")
+const User = require("../models/User");
 
 const generatePlaylist = async (req, res) => {
   const { emotion } = req.body;
@@ -7,51 +7,51 @@ const generatePlaylist = async (req, res) => {
   const today = new Date().toDateString();
   const lastUsed = user.playlistLimit?.lastUsed?.toDateString();
 
-  // Limit: 1 playlist/day for free users
-  if (!user.isPremium && lastUsed === today && user.playlistLimit.count >= 1) {
-    return res.status(403).json({
-      success: false,
-      message: "Daily playlist limit reached. Upgrade for unlimited access.",
-    });
-  }
-
-  const playlistMap = { /* same as before */ };
+  // Smart mood → playlist logic
   const mood = emotion?.toLowerCase() || "neutral";
-  const playlistUrl = playlistMap[mood] || playlistMap["neutral"];
 
-  if (user.isPremium) {
+  const playlistMap = {
+  happy: "https://open.spotify.com/embed/playlist/37i9dQZF1DXdPec7aLTmlC",   // Energetic, Feel Good
+  sad: "https://open.spotify.com/embed/playlist/37i9dQZF1DX7qK8ma5wgG1",     // Calm & Comforting
+  angry: "https://open.spotify.com/embed/playlist/37i9dQZF1DX4sWSpwq3LiO",   // Chill & Lo-Fi
+  relaxed: "https://open.spotify.com/embed/playlist/37i9dQZF1DX4sWSpwq3LiO", // Ambient
+  neutral: "https://open.spotify.com/embed/playlist/37i9dQZF1DX4fpCWaHOned", // Balanced & Uplifting
+};
+
+
+  const moodBasedRedirect = {
+    happy: playlistMap.happy, // reinforce joy
+    sad: playlistMap.relaxed,   // uplift mood
+    angry: playlistMap.relaxed, // calm down
+    relaxed: playlistMap.happy, // maintain vibe
+    neutral: playlistMap.neutral, // keep light
+  };
+
+  const playlistUrl = moodBasedRedirect[mood] || playlistMap.neutral;
+
+  // Save to user's history
   user.savedPlaylists.push({
     url: playlistUrl,
     mood,
     date: new Date(),
   });
-  await user.save();
-}
 
-  // Update usage
-  if (lastUsed !== today) {
-    user.playlistLimit = { count: 1, lastUsed: new Date() };
-  } else {
-    user.playlistLimit.count += 1;
-  }
-
+  
   await user.save();
 
   res.status(200).json({
     success: true,
     playlist: playlistUrl,
-    message: `Here's your mood-lifting playlist 🌈`,
+    message: `Here's a playlist to help you with your "${mood}" mood 🎶`,
   });
 };
-
 
 const getSavedPlaylists = async (req, res) => {
   const user = await User.findById(req.user._id);
   res.status(200).json({
     success: true,
-    playlists: user.savedPlaylists.reverse(), // newest first
+    playlists: user.savedPlaylists.reverse(),
   });
 };
 
-
-module.exports = { generatePlaylist , getSavedPlaylists };
+module.exports = { generatePlaylist, getSavedPlaylists };
