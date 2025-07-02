@@ -6,6 +6,7 @@ const Journal = require("../models/journalModel");
 
 const auth = require("../middleware/authMiddleware");
 const admin = require("../middleware/adminMiddleware");
+const Review = require("../models/reviewModel"); 
 
 // Get all users
 router.get("/users", auth, admin, async (req, res) => {
@@ -35,6 +36,14 @@ router.get("/stats", auth, admin, async (req, res) => {
   const activeLast7Days = await User.countDocuments({ lastEntryDate: { $gte: oneWeekAgo } });
 
   res.json({ totalUsers, totalEntries, moodAverage, activeLast7Days });
+});
+
+router.delete("/delete-review/:id", auth, admin, async (req, res) => {
+  const review = await Review.findByIdAndDelete(req.params.id);
+  if (!review) {
+    return res.status(404).json({ error: "Review not found" });
+  }
+  res.json({ message: "Review deleted successfully" });
 });
 
 module.exports = router;
