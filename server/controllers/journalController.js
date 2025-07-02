@@ -1,13 +1,9 @@
-const checkLimit = require("../utils/checkLimit");
 
 const JournalEntry = require("../models/journalModel");
 const User = require("../models/User");
 
 const createJournalEntry = async (req, res) => {
   try {
-     if (!checkLimit("journal", req.user)) {
-  return res.status(403).json({ message: "Journal limit reached for today. Upgrade to premium." });
-   }
    
     const { title ,mood, text, emotion, imageUrl, audioUrl , analysis } = req.body;
     const userId = req.user._id;
