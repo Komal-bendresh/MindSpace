@@ -10,6 +10,7 @@ const chatSchema = new mongoose.Schema({
   ],
   lastDate: String,
   dailyCount: { type: Number, default: 0 },
+   sessionName: { type: String },
 },{
   timestamps:true,
 });
