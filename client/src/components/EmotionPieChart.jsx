@@ -13,7 +13,7 @@ const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#00c49f"];
 const EmotionPieChart = ({ data }) => {
   return (
     <div className="bg-white dark:bg-zinc-900 p-4 rounded shadow">
-      <h2 className="text-lg font-semibold mb-4">Emotion Frequency</h2>
+      <h2 className="text-lg font-semibold mb-4">Mood Frequency</h2>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
              <Pie
