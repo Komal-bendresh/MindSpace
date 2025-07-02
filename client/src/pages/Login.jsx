@@ -283,10 +283,9 @@ export default function Login() {
     setLoading(true);
     try {
        const res = await loginUser({ email, password });
-      const token = res.data.token;
-
-        login(token); // ✅ updates context
-        navigate("/journal"); // or dashboard
+      const { token, user } = res.data;
+      login(token, user);
+      navigate("/journal"); 
         
     } catch (err) {
       console.log(err.response?.data || err.message);
