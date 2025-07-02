@@ -28,18 +28,20 @@ const aiRoutes =  require("./routes/aiRoutes");
 const chatRoutes =  require("./routes/chatRoutes");
 const reviewRoutes = require("./routes/reviewRoutes")
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const playlistRoutes = require("./routes/playlistRoutes");
+const insightRoutes = require("./routes/insightRoutes");
 app.use('/api/auth', authRoutes);
 app.use("/api/journal", journalRoutes);
 app.use("/api/ai",aiRoutes);
 app.use("/api/chat",chatRoutes)
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/play", playlistRoutes);
+app.use("/api/insights",insightRoutes);
 
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes);
 
-const paymentRoutes = require("./routes/paymentRoutes");
-app.use("/api/payment", paymentRoutes);
 
 
 connectDB();
