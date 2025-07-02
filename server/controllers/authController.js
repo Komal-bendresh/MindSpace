@@ -56,7 +56,7 @@ const registerUser = async (req, res) => {
 //Login
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password,role } = req.body;
 
   try {
     if (!email || !password) {
@@ -105,6 +105,7 @@ const loginUser = async (req, res) => {
       user: {
         _id: user._id,
         email: user.email,
+        role: user.role,
       }
     });
 
@@ -220,7 +221,7 @@ const resendOtp = async (req, res) => {
     const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 mins later
 
      await OTP.create({ email, otp: hashedOtp, expiresAt: otpExpires });
-    console.log("OTP:", otpCode)
+
     // Send OTP Email
     await sendOtpEmail(email, otpCode);
 
