@@ -1,14 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import { toast } from 'react-toastify';
 import { verifyOtp } from '../api/auth';
-import { useAuth } from '../context/AuthContext'; // ✅
+import { useAuth } from '../context/AuthContext';
 
 const VerifyOtp = () => {
   const location = useLocation();
-  const { login } = useAuth(); // ✅
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,14 +29,11 @@ const VerifyOtp = () => {
     try {
       const res = await verifyOtp({ email, otp });
       const { user } = res.data;
-
-      // ✅ Store user and simulate login
-      const fakeToken = "session-cookie"; // optional, for localStorage logic
+      const fakeToken = "session-cookie";
       login(fakeToken, user);
-
       sessionStorage.removeItem("pendingSignupEmail");
       toast.success(res.data.message);
-      window.location.href = '/'; // or useNavigate('/dashboard')
+      window.location.href = '/';
     } catch (err) {
       toast.error(err.response?.data?.message || 'OTP verification failed');
     }
@@ -59,12 +55,14 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-semibold mb-4 text-center">Verify OTP</h2>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-lg transition-all duration-300">
+      <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800 dark:text-white">
+        Verify OTP
+      </h2>
       <form onSubmit={handleVerify} className="space-y-4">
         <input
           type="email"
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -72,7 +70,7 @@ const VerifyOtp = () => {
         />
         <input
           type="text"
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           placeholder="Enter OTP"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
@@ -80,13 +78,13 @@ const VerifyOtp = () => {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-all"
         >
           {loading ? "Verifying..." : "Verify OTP"}
         </button>
         <button
           type="button"
-          className="w-full mt-2 text-sm text-blue-600 underline"
+          className="w-full mt-2 text-sm text-blue-600 dark:text-blue-400 underline"
           onClick={handleResend}
         >
           Resend OTP
