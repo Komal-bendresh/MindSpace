@@ -33,7 +33,7 @@ const VerifyOtp = () => {
       login(fakeToken, user);
       sessionStorage.removeItem("pendingSignupEmail");
       toast.success(res.data.message);
-      window.location.href = '/';
+      window.location.href = '/journal';
     } catch (err) {
       toast.error(err.response?.data?.message || 'OTP verification failed');
     }
