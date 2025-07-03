@@ -1,6 +1,6 @@
 // src/pages/admin/ReviewsList.jsx
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../api/axios';
 
 export default function ReviewsList() {
  const [reviews, setReviews] = useState([]);

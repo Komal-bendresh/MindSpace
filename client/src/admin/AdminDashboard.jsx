@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import UsersList from "./UsersList";
 import ReviewsList from "./ReviewsList";
-import axios from "axios";
+import axios from '../api/axios';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState(null);

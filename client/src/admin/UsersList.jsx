@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../api/axios';
 
 export default function UsersList() {
   const [users, setUsers] = useState([]);
