@@ -88,6 +88,52 @@ export default function Login() {
         backdrop-filter: blur(15px);
         border-right: 1px solid rgba(255, 255, 255, 0.1);
       }
+         @media (max-width: 768px) {
+        .login-card {
+          width: 100% !important;
+          height: auto !important;
+          min-height: 100vh !important;
+          border-radius: 0 !important;
+          flex-direction: column !important;
+        }
+
+        .image-section {
+          display: none !important;
+        }
+
+        .form-section {
+          flex: 1 !important;
+          padding: 40px 20px !important;
+          min-height: 100vh !important;
+        }
+
+        .login-card:hover {
+          transform: none !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .form-section {
+          padding: 30px 15px !important;
+        }
+      }
+
+      /* Tablet styles */
+      @media (max-width: 1024px) and (min-width: 769px) {
+        .login-card {
+          width: 90vw !important;
+          height: auto !important;
+          min-height: 70vh !important;
+        }
+
+        .image-section {
+          padding: 30px !important;
+        }
+
+        .form-section {
+          padding: 40px 30px !important;
+        }
+      }
 
       .animated-background span:nth-child(1) {
         color: #E45A84;
