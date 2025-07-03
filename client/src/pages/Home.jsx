@@ -65,7 +65,7 @@ const { isDark: darkMode, toggleTheme: toggleDarkMode } = useTheme();
   ];
 
   return (
-    <div className={`min-h-screen transition-all duration-500 ${
+    <div className={`min-h-screen  mt-10 transition-all duration-500 ${
       darkMode 
         ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-gray-800 text-white' 
         : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-900'
