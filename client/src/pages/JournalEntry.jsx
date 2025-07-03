@@ -40,14 +40,15 @@ useEffect(() => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-4 p-4">
-      <RecentEntriesPanel entries={entries}
-       onEdit={handleEdit}
-       onDelete={handleDelete} />
-      <JournalForm
+      
+      <JournalForm 
   onEntryAdded={fetchEntries}
   editingEntry={editingEntry}
   clearEditing={() => setEditingEntry(null)}
   />
+  <RecentEntriesPanel entries={entries}
+       onEdit={handleEdit}
+       onDelete={handleDelete} />
     </div>
   );
 };
