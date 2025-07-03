@@ -64,12 +64,12 @@ export default function Login() {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
         border: 1px solid rgba(255, 255, 255, 0.2);
         transition: all 0.3s ease;
-        animation: float 6s ease-in-out infinite;
+        // animation: float 6s ease-in-out infinite;
       }
 
       .login-card:hover {
-        animation: glow 2s ease-in-out infinite, float 6s ease-in-out infinite;
-        transform: translateY(-5px) scale(1.02);
+        animation: glow 2s ease-in-out infinite;
+        transform: translateY(-5px) ;
         border: 1px solid rgba(228, 90, 132, 0.4);
       }
 
@@ -540,7 +540,7 @@ export default function Login() {
                   e.target.style.color = 'rgba(255, 255, 255, 0.8)';
                   e.target.style.textShadow = 'none';
                 }}>
-                  Forgot your password?
+                
                 </a>
               </div>
             </div>

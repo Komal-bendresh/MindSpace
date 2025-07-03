@@ -1,16 +1,18 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { verifyOtp } from '../api/auth';
+import { useAuth } from '../context/AuthContext'; // ✅
 
 const VerifyOtp = () => {
   const location = useLocation();
+  const { login } = useAuth(); // ✅
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Get email from location state or sessionStorage
   useEffect(() => {
     const fromSignup = location.state?.email;
     if (fromSignup) {
@@ -27,9 +29,15 @@ const VerifyOtp = () => {
     setLoading(true);
     try {
       const res = await verifyOtp({ email, otp });
-      toast.success(res.data.message);
+      const { user } = res.data;
+
+      // ✅ Store user and simulate login
+      const fakeToken = "session-cookie"; // optional, for localStorage logic
+      login(fakeToken, user);
+
       sessionStorage.removeItem("pendingSignupEmail");
-      window.location.href = '/';
+      toast.success(res.data.message);
+      window.location.href = '/'; // or useNavigate('/dashboard')
     } catch (err) {
       toast.error(err.response?.data?.message || 'OTP verification failed');
     }
