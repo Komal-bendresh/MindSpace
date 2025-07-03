@@ -5,11 +5,12 @@ export const signupUser = async (data) => {
 };
 
 export const verifyOtp = async (data) => {
-  return await axios.post('/api/auth/verify-otp', data);
+  return await axios.post('/api/auth/verify-otp', data, {withCredentials: true});
+  
 };
 
 export const loginUser = async (data) => {
-  return await axios.post('/api/auth/login', data);
+  return await axios.post('/api/auth/login', data,{withCredentials: true});
 };
 
 export const createJournalEntry = async ({ mood, text ,title}) => {
