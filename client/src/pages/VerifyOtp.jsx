@@ -11,9 +11,7 @@ const VerifyOtp = () => {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const [debugError, setDebugError] = useState('');
-
+  
 
   useEffect(() => {
     const fromSignup = location.state?.email;
@@ -38,10 +36,7 @@ const VerifyOtp = () => {
       toast.success(res.data.message);
       window.location.href = '/journal';
     } catch (err) {
-     
-       const message = err.response?.data?.message || err.message || 'OTP verification failed';
-      toast.error(message);
-      setDebugError(JSON.stringify(err.response?.data || err.message));
+      toast.error(err.response?.data?.message || 'OTP verification failed');
     }
     setLoading(false);
   };
@@ -96,14 +91,6 @@ const VerifyOtp = () => {
           Resend OTP
         </button>
       </form>
-      {debugError && (
-  <p className="mt-4 text-sm text-red-600 break-words">
-    Debug Error: {debugError}
-  </p>
-)}
-<p className="text-xs text-gray-500">Email: {email}</p>
-<p className="text-xs text-gray-500">OTP: {otp}</p>
-
     </div>
   );
 };
