@@ -128,13 +128,6 @@ export const fetchEmotionFrequency = async () => {
   return res.data.data;
 };
 
-export const fetchJournalKeywords = async () => {
-  const token = localStorage.getItem("token");
-  const res = await axios.get("/api/analytics/journal-keywords", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.data.keywords;
-};
 
 export const fetchWeeklyInsights = async () => {
   const token = localStorage.getItem("token");

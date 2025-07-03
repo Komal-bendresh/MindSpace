@@ -98,7 +98,9 @@ const loginUser = async (req, res) => {
     
 
     res.cookie("token", token, {
-      httpOnly: true,
+        httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // only allow over HTTPS in production
+  sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     }).status(200).json({
       message: "Login successful",
@@ -178,7 +180,9 @@ const verifyOtp = async (req, res) => {
     await sendWelcomeEmail(user.email, user.name);
     
     res.cookie("token", token, {
-      httpOnly: true,
+       httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // only allow over HTTPS in production
+  sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     }).status(200).json({
       message: "User created and verified successfully",
@@ -244,7 +248,9 @@ const resendOtp = async (req, res) => {
 //logout user
 const logoutUser = async (req, res) => {
   res.clearCookie("token", {
-    httpOnly: true,
+      httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // only allow over HTTPS in production
+  sameSite: "None",
   });
   res.status(200).json({ message: "Logged out successfully" });
 };
