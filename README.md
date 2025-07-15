@@ -47,7 +47,7 @@ MindSpace is an intelligent journaling and emotional analysis platform powered b
 4. Run dev servers:
    - Frontend: `npm run dev`
    - Backend: `npm start or npm run dev`
-
+5. Check it out - mind-space-ai.vercel.app/
 ## 📬 Contribute
 
 Feel free to submit issues or pull requests to improve the platform!
