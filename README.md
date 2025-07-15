@@ -2,7 +2,9 @@
 
 MindSpace is an intelligent journaling and emotional analysis platform powered by AI. It helps users track their mental health, express emotions through writing or voice, and receive tailored support.
 
-  Check it out - mind-space-ai.vercel.app/
+[Check the Live Demo](mind-space-ai.vercel.app/)
+
+
   
 ## 🌟 Features
 
