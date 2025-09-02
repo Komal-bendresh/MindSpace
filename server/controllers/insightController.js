@@ -28,7 +28,7 @@ Respond in this JSON format:
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.1-70b-versatile",
+        model: "deepseek-r1-distill-llama-70b",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 300,
         temperature: 0.7,
