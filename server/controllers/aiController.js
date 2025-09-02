@@ -11,7 +11,7 @@ const analyzeMood = async (req, res) => {
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama3-70b-8192",
+        model: "qwen/qwen3-32b",
         messages: [
           {
             role: "system",
