@@ -49,24 +49,43 @@ and dont write think part.`
       { role: "user", content: message },
     ];
 
-    const response = await axios.post(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        model: "qwen/qwen3-32b",
-        messages: groqMessages,
-        max_tokens: 150,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        timeout: 5000,
-      }
-    );
-
+    // const response = await axios.post(
+    //   "https://api.groq.com/openai/v1/chat/completions",
+    //   {
+    //     model: "qwen/qwen3-32b",
+    //     messages: groqMessages,
+    //     max_tokens: 150,
+    //     temperature: 0.7,
+    //   },
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+    //       "Content-Type": "application/json",
+    //     },
+    //     timeout: 5000,
+    //   }
+    // );
+    
+const response = await axios.post(
+  "https://api.groq.com/openai/v1/chat/completions",
+  {
+    model: "qwen/qwen3-32b",
+    messages: groqMessages,
+    max_tokens: 150,
+    temperature: 0.7,
+    response_format: { type: "text" }, // 👈 this strips <think>
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    timeout: 5000,
+  }
+);
     const reply = response.data.choices[0].message?.content;
+    // Remove <think> sections if they exist
+reply = reply.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
 
     chat.messages.push(
       { role: "user", content: message, date: new Date() },
