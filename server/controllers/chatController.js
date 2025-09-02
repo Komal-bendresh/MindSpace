@@ -41,8 +41,7 @@ Detect the user's language and respond in the same style (e.g., Hinglish in Lati
 Always directly acknowledge the user's *most recent message*. 
 Do NOT skip or ignore their last statement.
 Avoid giving generic or unrelated responses.
-Use Hindi words in English letters (like "main thik hoon") and never full Hindi script.And summarize your reply in 100 words max.
-and dont write think part.`
+Use Hindi words in English letters (like "main thik hoon") and never full Hindi script.And summarize your reply in 100 words max.`
 ,
       },
       ...cleanedMessages,
@@ -69,7 +68,7 @@ and dont write think part.`
 const response = await axios.post(
   "https://api.groq.com/openai/v1/chat/completions",
   {
-    model: "qwen/qwen3-32b",
+    model: "llama-3.1-70b-versatile",
     messages: groqMessages,
     max_tokens: 150,
     temperature: 0.7,
