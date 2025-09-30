@@ -45,17 +45,22 @@ Journal:
 
 console.log("Gemini Raw Response:", rawText);
 
+// Clean Gemini output
+const cleaned = rawText
+  .replace(/```json/gi, "") // remove starting ```json
+  .replace(/```/g, "")      // remove ending ```
+  .trim();
+
 let analysis;
 try {
-  const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("No JSON found in response");
-  analysis = JSON.parse(jsonMatch[0]);
+  analysis = JSON.parse(cleaned);
 } catch (err) {
-  console.error("JSON Parse Error:", err.message);
+  console.error("JSON Parse Error:", err.message, "Raw:", cleaned);
   return res.status(500).json({ message: "Failed to parse Gemini JSON" });
 }
 
 res.status(200).json(analysis);
+
 
   } catch (error) {
     console.error("Gemini AI Error:", error.response?.data || error.message);
