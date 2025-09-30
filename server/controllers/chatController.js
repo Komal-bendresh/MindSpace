@@ -26,66 +26,49 @@ const chatWithAI = async (req, res) => {
       chat.dailyCount = 0;
     }
 
-    const cleanedMessages = chat.messages.map((m) => ({
-      role: m.role,
-      content: m.content,
-    }));
-
-    const groqMessages = [
-      {
-        role: "system",
-        content: `You are a kind and caring mental health assistant. 
-Speak like a supportive friend. Be empathetic, warm, and conversational. 
+    // ✅ System-style prompt for Gemini
+    const systemPrompt = `You are a kind and caring mental health assistant. 
+Speak like a supportive friend: empathetic, warm, and conversational. 
 Always remember what the user has previously said and respond naturally.
 Detect the user's language and respond in the same style (e.g., Hinglish in Latin script).
-Always directly acknowledge the user's *most recent message*. 
-Do NOT skip or ignore their last statement.
-Avoid giving generic or unrelated responses.
-Use Hindi words in English letters (like "main thik hoon") and never full Hindi script.And summarize your reply in 100 words max.`
-,
+Always directly acknowledge the user's most recent message. 
+Avoid generic or unrelated replies. 
+Use Hindi words in English letters (like "main thik hoon"), never Hindi script. 
+Summarize your reply in 100 words max.`;
+
+    // ✅ Convert old chat history into Gemini format
+    const geminiMessages = [
+      {
+        role: "user", // acts as "system" context
+        parts: [{ text: systemPrompt }],
       },
-      ...cleanedMessages,
-      { role: "user", content: message },
+      ...chat.messages.map((m) => ({
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: m.content }],
+      })),
+      {
+        role: "user",
+        parts: [{ text: message }],
+      },
     ];
 
-    // const response = await axios.post(
-    //   "https://api.groq.com/openai/v1/chat/completions",
-    //   {
-    //     model: "qwen/qwen3-32b",
-    //     messages: groqMessages,
-    //     max_tokens: 150,
-    //     temperature: 0.7,
-    //   },
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     timeout: 5000,
-    //   }
-    // );
-    
-const response = await axios.post(
-  "https://api.groq.com/openai/v1/chat/completions",
-  {
-    model: "deepseek-r1-distill-llama-70b",
-    messages: groqMessages,
-    max_tokens: 150,
-    temperature: 0.7,
-    response_format: { type: "text" }, // 👈 this strips <think>
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    timeout: 5000,
-  }
-);
-    const reply = response.data.choices[0].message?.content;
-    // Remove <think> sections if they exist
-reply = reply.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+    // ✅ Call Gemini API
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: geminiMessages,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+        timeout: 10000,
+      }
+    );
 
+    let reply =
+      response.data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "Sorry, I couldn’t generate a reply.";
+
+    // ✅ Save chat
     chat.messages.push(
       { role: "user", content: message, date: new Date() },
       { role: "assistant", content: reply, date: new Date() }
@@ -96,10 +79,12 @@ reply = reply.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
 
     return res.status(200).json({ reply });
   } catch (err) {
-    console.error("Chat Error:", err);
+    console.error("Chat Error:", err.response?.data || err.message);
     return res.status(500).json({ message: "Chat failed internally." });
   }
 };
+
+module.exports = { chatWithAI };
 
 const getChatHistory = async (req, res) => {
   try {
