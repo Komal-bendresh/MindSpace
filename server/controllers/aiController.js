@@ -8,41 +8,52 @@ const analyzeMood = async (req, res) => {
   }
 
   try {
+    // Prompt asking Gemini to return strict JSON
+    const prompt = `
+You are a compassionate mental health assistant. 
+Analyze the journal entry below and reply ONLY in JSON with these keys:
+{
+  "emotion": "detected mood or emotion",
+  "selfCare": "1 self-care suggestion",
+  "affirmation": "1 short daily affirmation",
+  "goal": "1 weekly goal suggestion"
+}
+
+Journal:
+"""${journalText}"""
+`;
+
     const response = await axios.post(
-      "https://api.groq.com/openai/v1/chat/completions",
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
-        model: "deepseek-r1-distill-llama-70b",
-        messages: [
-          {
-            role: "system",
-            content: `You are a compassionate mental health assistant. 
-              Analyze the journal entry below and reply with:
-              - Emotion detected
-              - 1 Self-care suggestion
-              - 1 Daily affirmation
-              - 1 Weekly goal suggestion
-              Reply in max 100 words.`,
-          },
+        contents: [
           {
             role: "user",
-            content: journalText,
+            parts: [{ text: prompt }],
           },
         ],
-        max_tokens: 150,
-        temperature: 0.7,
       },
       {
-        headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        timeout: 10000,
       }
     );
 
-    const analysis = response.data.choices[0].message.content;
-    res.status(200).json({ analysis });
+    // Extract Gemini response
+    const rawText =
+      response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+    // Match JSON inside response
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("Gemini did not return valid JSON");
+    }
+
+    const analysis = JSON.parse(jsonMatch[0]);
+
+    res.status(200).json(analysis);
   } catch (error) {
-    console.error("Groq AI Error:", error.message);
+    console.error("Gemini AI Error:", error.response?.data || error.message);
     res.status(500).json({ message: "AI analysis failed" });
   }
 };
