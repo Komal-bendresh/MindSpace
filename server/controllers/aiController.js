@@ -40,18 +40,23 @@ Journal:
     );
 
     // Extract Gemini response
-    const rawText =
-      response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+   const rawText =
+  response.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
 
-    // Match JSON inside response
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error("Gemini did not return valid JSON");
-    }
+console.log("Gemini Raw Response:", rawText);
 
-    const analysis = JSON.parse(jsonMatch[0]);
+let analysis;
+try {
+  const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON found in response");
+  analysis = JSON.parse(jsonMatch[0]);
+} catch (err) {
+  console.error("JSON Parse Error:", err.message);
+  return res.status(500).json({ message: "Failed to parse Gemini JSON" });
+}
 
-    res.status(200).json(analysis);
+res.status(200).json(analysis);
+
   } catch (error) {
     console.error("Gemini AI Error:", error.response?.data || error.message);
     res.status(500).json({ message: "AI analysis failed" });

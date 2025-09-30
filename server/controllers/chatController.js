@@ -150,7 +150,6 @@ Keep reply <= 100 words.`;
   }
 };
 
-module.exports = { chatWithAI };
 
 const getChatHistory = async (req, res) => {
   try {
