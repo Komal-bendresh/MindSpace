@@ -60,7 +60,7 @@ Summarize your reply in 100 words max.`;
       },
       {
         headers: { "Content-Type": "application/json" },
-        timeout: 10000,
+        timeout: 30000,
       }
     );
 
